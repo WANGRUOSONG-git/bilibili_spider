@@ -144,7 +144,7 @@ class HomePage(QWidget):
         layout.addStretch()
 
         # 添加作者信息
-        author_label = QLabel("作者: Roinflam | 版本: 1.0.0")
+        author_label = QLabel("版本: 1.0.0")
         author_label.setAlignment(Qt.AlignmentFlag.AlignRight)
         author_label.setStyleSheet("color: #666666; margin: 0px;")
         layout.addWidget(author_label)

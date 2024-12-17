@@ -32,7 +32,7 @@ class MainWindow(QMainWindow):
             raise
 
     def init_ui(self):
-        self.setWindowTitle("B站评论爬虫 - 作者：Roinflam")
+        self.setWindowTitle("B站评论爬虫")
         self.resize(1200, 800)
         self.setMinimumSize(1000, 600)
         self.setup_style()
