@@ -224,7 +224,7 @@ class CrawlPage(QWidget):
         control_layout.addWidget(page_label)
 
         self.page_spinbox = QSpinBox()
-        self.page_spinbox.setRange(1, 100)
+        self.page_spinbox.setRange(1, 1000000)
         self.page_spinbox.setValue(10)
         self.page_spinbox.setMinimumWidth(120)
         self.page_spinbox.setAlignment(Qt.AlignmentFlag.AlignCenter)
