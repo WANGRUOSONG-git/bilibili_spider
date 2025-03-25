@@ -2,6 +2,7 @@
 
 """数据库操作工具"""
 
+import csv
 import sqlite3
 import json
 import logging
@@ -345,46 +346,33 @@ class DatabaseHandler:
                 'latest_comment': None
             }
 
-    def export_comments(self, video_id=None, format='json'):
-        """导出评论数据
+    def export_comments_to_csv(self, file_path):
+        """将评论数据导出为CSV文件
 
-        @param {string} video_id - 视频ID，为None时导出所有评论
-        @param {string} format - 导出格式，支持json/csv
-        @return {string} - 导出的数据字符串
+        @param {string} file_path - CSV文件的保存路径
         """
         try:
             with self.get_connection() as conn:
                 cursor = conn.cursor()
 
-                if video_id:
-                    cursor.execute('''
-                           SELECT * FROM comments 
-                           WHERE video_id = ? 
-                           ORDER BY publish_time DESC
-                       ''', (video_id,))
-                else:
-                    cursor.execute('SELECT * FROM comments ORDER BY publish_time DESC')
-
+                # 查询所有评论数据
+                cursor.execute('SELECT * FROM comments ORDER BY publish_time DESC')
                 results = cursor.fetchall()
 
-                if format == 'json':
-                    # 将查询结果转换为JSON格式
-                    columns = [description[0] for description in cursor.description]
-                    data = []
+                if not results:
+                    return
+
+                # 获取表头
+                columns = [description[0] for description in cursor.description]
+
+                # 写入CSV文件
+                with open(file_path, 'w', newline='', encoding='utf-8-sig') as csv_file:
+                    writer = csv.writer(csv_file)
+                    writer.writerow(columns)  # 写入表头
+
                     for row in results:
-                        item = dict(zip(columns, row))
-                        if 'replies' in item:
-                            item['replies'] = json.loads(item['replies'])
-                        data.append(item)
-                    return json.dumps(data, ensure_ascii=False, indent=2)
-
-                elif format == 'csv':
-                    # TODO: 实现CSV格式导出
-                    raise NotImplementedError("CSV导出功能尚未实现")
-
-                else:
-                    raise ValueError(f"不支持的导出格式: {format}")
+                        writer.writerow(row)
 
         except Exception as e:
-            self.logger.error(f"导出评论失败: {str(e)}")
+            self.logger.error(f"导出CSV文件失败: {str(e)}")
             raise
