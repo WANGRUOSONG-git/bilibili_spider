@@ -421,7 +421,30 @@ class SettingsPage(QWidget):
 
     def backup_database(self):
         """备份数据库"""
-        QMessageBox.information(self, "提示", "数据库备份功能开发中...")
+        try:
+            # 获取数据库中的所有评论数据
+            comments = self.db_handler.get_all_comments()
+
+            if not comments:
+                QMessageBox.information(self, "提示", "数据库中没有评论数据")
+                return
+
+            # 提示用户选择保存路径
+            from PyQt6.QtWidgets import QFileDialog
+            file_path, _ = QFileDialog.getSaveFileName(
+                self, "保存CSV文件", "", "CSV文件 (*.csv)"
+            )
+
+            if not file_path:
+                return  # 用户取消保存
+
+            # 导出为CSV
+            self.db_handler.export_comments_to_csv(file_path)
+
+            QMessageBox.information(self, "成功", f"数据库备份成功，文件已保存到:\n{file_path}")
+
+        except Exception as e:
+            QMessageBox.critical(self, "错误", f"备份数据库失败: {str(e)}")
 
     def closeEvent(self, event):
         """窗口关闭事件处理"""
