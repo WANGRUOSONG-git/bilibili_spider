@@ -346,6 +346,18 @@ class DatabaseHandler:
                 'latest_comment': None
             }
 
+    def get_all_comments(self):
+        """获取所有评论数据"""
+        try:
+            with self.get_connection() as conn:
+                cursor = conn.cursor()
+                cursor.execute('SELECT * FROM comments ORDER BY publish_time DESC')
+                return cursor.fetchall()
+        except Exception as e:
+            self.logger.error(f"获取所有评论失败: {str(e)}")
+            raise
+    
+    
     def export_comments_to_csv(self, file_path):
         """将评论数据导出为CSV文件
 
